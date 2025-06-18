@@ -38,6 +38,8 @@ The lab emphasizes:
 - devuser successfully logged in via the IAM Identity Center access portal and assumed the role into `prod-account`
 - Access was verified to be scoped to the defined permissions
 
+![Federated IAM Architecture](diagram.png)
+
 ---
 
 ## Next Phase: Permission Boundaries (Planned)
