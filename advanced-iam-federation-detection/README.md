@@ -28,32 +28,46 @@ The lab emphasizes:
 
 ## Phase 2: Federated Identity and Access Control
 
-- IAM Identity Center enabled in the **management account** (organization-level instance)
-- IAM Identity Center is using the default **internal directory**
-- A user `devuser` and group `Developers` were created in the Identity Center directory
-- A permission set `DevAccessProd` was created with read-only access to:
-  - EC2: DescribeInstances
-  - S3: ListAllMyBuckets
-- Group `Developers` was assigned to the `prod-account` with the `DevAccessProd` permission set
-- devuser successfully logged in via the IAM Identity Center access portal and assumed the role into `prod-account`
-- Access was verified to be scoped to the defined permissions
+- IAM Identity Center was enabled as an **organization-level instance** in the management account
+- `security-account` was registered as the **delegated administrator** for IAM Identity Center using the AWS CLI:
+  ```bash
+  aws organizations register-delegated-administrator \
+    --account-id <security-account-id> \
+    --service-principal sso.amazonaws.com
 
-![Federated IAM Architecture](diagram.png)
+    ---
 
----
+## Phase 3: Permissions Boundaries – Limitations with IAM Identity Center
 
-## Next Phase: Permission Boundaries (Planned)
+### Goal
 
-The next phase will simulate an overly permissive Identity Center permission set being scoped back using a permission boundary in the `prod-account`. This will demonstrate how permission boundaries provide a mechanism for enforcing limits on what even “approved” roles can do, regardless of how they are assigned.
+We attempted to apply a permissions boundary to an `AWSReservedSSO_*` role provisioned by IAM Identity Center to demonstrate constraint-based access control.
 
----
+### Outcome
 
-## Portfolio Use
+❌ **Failed**: AWS blocks modification of `AWSReservedSSO_*` roles. These roles are fully managed by IAM Identity Center and cannot be edited — including attaching permission boundaries.
 
-This lab is documented step-by-step and mirrors production-grade AWS identity architecture. It can be extended to include:
+### Why
 
-- Organization-wide detection of IAM-related activity via CloudTrail and EventBridge
-- Tag-based access control (ABAC)
-- Identity federation via external IdPs (e.g., Google Workspace or Okta)
-- Terraform automation of identity provisioning
+While IAM roles generally support permissions boundaries, roles created by IAM Identity Center are:
+- Owned and maintained by AWS
+- Automatically replaced or re-created when changes occur in permission sets
+- Locked down to prevent manual modification (even from account admins)
+
+### Takeaway
+
+This is **by design**. AWS Identity Center expects access to be controlled through:
+- Permission sets
+- Scoped permissions
+- Service control policies (SCPs) at the org/OUs level
+- Logging and detection for misuse
+
+### Alternative Plan (Phase 4)
+
+Instead of permission boundaries, we’ll pivot to:
+- Assigning over-permissive access intentionally
+- Detecting unusual or risky behavior via CloudTrail and EventBridge
+
+This approach better reflects how many orgs operate in federated environments using centralized access controls and detection mechanisms.
+
 
