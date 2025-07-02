@@ -29,7 +29,7 @@ This guide implements automated EC2 threat isolation triggered by GuardDuty netw
 **Management Account Setup:**
 ```bash
 # Enable trusted access from AWS Organizations → Services → GuardDuty
-# Delegate administrator to security-account (257288818635)
+# Delegate administrator to security-account (111111111111)
 ```
 
 **Security Account Configuration:**
@@ -68,7 +68,7 @@ aws guardduty create-sample-findings \
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::257288818635:role/service-role/GuardDutyThreatResponse-role-XXXXX"
+                "AWS": "arn:aws:iam::111111111111:role/service-role/GuardDutyThreatResponse-role-XXXXX"
             },
             "Action": "sts:AssumeRole",
             "Condition": {
@@ -206,7 +206,7 @@ aws lambda add-permission \
   --statement-id allow-eventbridge \
   --action lambda:InvokeFunction \
   --principal events.amazonaws.com \
-  --source-arn "arn:aws:events:us-east-1:257288818635:rule/GuardDutyThreatResponse" \
+  --source-arn "arn:aws:events:us-east-1:111111111111:rule/GuardDutyThreatResponse" \
   --profile sec-admin \
   --region us-east-1
 ```
@@ -228,10 +228,10 @@ echo '{
       "Types": ["TTPs/Command and Control/Trojan:EC2-DNSDataExfiltration"],
       "ProductName": "GuardDuty",
       "Severity": {"Label": "HIGH"},
-      "AwsAccountId": "947874856077",
+      "AwsAccountId": "222222222222",
       "Resources": [{
         "Type": "AwsEc2Instance",
-        "Id": "arn:aws:ec2:us-east-1:947874856077:instance/i-99999999"
+        "Id": "arn:aws:ec2:us-east-1:222222222222:instance/i-99999999"
       }]
     }]
   }
