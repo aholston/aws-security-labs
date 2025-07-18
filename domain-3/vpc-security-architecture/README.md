@@ -1,4 +1,4 @@
-# Multi-Account VPC Security Architecture with Network Monitoring
+# VPC Security Architecture with Network Monitoring
 
 This lab implements enterprise-grade network security architecture across AWS Organization accounts using VPC segmentation, progressive access controls, and comprehensive threat detection. It demonstrates production-ready infrastructure security patterns that integrate with existing IAM federation and incident response systems.
 
